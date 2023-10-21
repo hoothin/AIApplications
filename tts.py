@@ -15,6 +15,8 @@ from pydub import AudioSegment
 # 微软TTS的API key
 subscription_key = ""
 server_local = "japaneast"
+input_path = "data/words.txt"
+result_path = "merged_audio"
 
 # 晓晓 zh-CN-XiaoxiaoNeural 一般 青年 女
 # 晓辰 zh-CN-XiaochenNeural 内敛 青年 女
@@ -169,7 +171,7 @@ def load_source_data_text(file_path, failed):
         print(str(index + 1), "/", str(len(sentences)), end='\r')
 
     print("\n開始合併語音。。。")
-    merged_output_path = file_path.split("words.txt")[0].replace("data", "merged_audio")
+    merged_output_path = file_path.split("words.txt")[0].replace("data", result_path)
     if not os.path.exists(merged_output_path):
         os.makedirs(merged_output_path)
     app.merge_audio_files(audio_files, merged_output_path + 'sound.wav')
@@ -190,4 +192,4 @@ if __name__ == "__main__":
             print("Invalid file format. Please provide a TXT file.")
     else:
         print("讀取文字中……")
-        load_source_data_text("data/words.txt", 0)
+        load_source_data_text(input_path, 0)
