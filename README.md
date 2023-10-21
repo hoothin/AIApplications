@@ -1,4 +1,4 @@
-AI applications ![license](https://img.shields.io/badge/License-MPL2.0-red.svg)
+AI applications [![license](https://img.shields.io/badge/License-MPL2.0-red.svg)](LICENSE)
 ===
 Some AI applications I wrote
 
