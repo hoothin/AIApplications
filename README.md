@@ -2,6 +2,8 @@ AI applications [![license](https://img.shields.io/badge/License-MPL2.0-red.svg)
 ===
 Some AI applications I wrote
 
+[**📧Mail Me**](mailto:rixixi@gmail.com)
+
 [tts.py](tts.py)
 ---
 Call Microsoft Speech API to generate speech and srt subtitle files from text. Supports error retry and breakpoint resume.
