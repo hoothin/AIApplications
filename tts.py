@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Author: Hoothin
-呼叫微軟官網的API，產生文字合成語音與字幕文件
+调用微软官网的API，生成文本合成语音
 """
 import os
 import sys
@@ -39,7 +39,7 @@ result_path = "merged_audio"
 # 云野 zh-CN-YunyeNeural 捏鼻子 中年 男
 # 云健 zh-CN-YunjianNeural 沉稳 中年 男
 # 云泽 zh-CN-YunzeNeural 温柔 中年 男
-timbre = "zh-CN-XiaoxuanNeural"
+timbre = "zh-CN-XiaomoNeural"
 
 class TextToSpeech(object):
     def __init__(self, subscription_key, timbre, server_local):
@@ -147,7 +147,16 @@ def is_chinese(string):
 
 def load_source_data_text(file_path, failed):
     app = TextToSpeech(subscription_key, timbre, server_local)
-    app.get_token()
+    try:
+        app.get_token()
+    except Exception as e:
+        if failed < 20:
+            print("检测到异常，自动重启中……")
+            time.sleep(3)
+            load_source_data_text(file_path, failed + 1)
+        else:
+            print("执行异常，重启继续执行")
+        return
     with open(file_path, 'r', encoding='utf-8') as file:
         text = file.read()
     text = re.sub(r'([。？！…\?\!]+)([^”’」』])', r'\1\n\2', text)
@@ -161,16 +170,16 @@ def load_source_data_text(file_path, failed):
         result = app.save_audio(sentence, path_child)
         if result == False:
             if failed < 20:
-                print("偵測到異常，自動重新啟動中……")
+                print("检测到异常，自动重启中……")
                 time.sleep(3)
                 load_source_data_text(file_path, failed + 1)
             else:
-                print("執行異常，重啟繼續執行")
+                print("执行异常，重启继续执行")
             return
         audio_files.append(path_child + '.wav')
         print(str(index + 1), "/", str(len(sentences)), end='\r')
 
-    print("\n開始合併語音。。。")
+    print("\n开始合并语音。。。")
     merged_output_path = file_path.split("words.txt")[0].replace("data", result_path)
     if not os.path.exists(merged_output_path):
         os.makedirs(merged_output_path)
@@ -179,7 +188,7 @@ def load_source_data_text(file_path, failed):
     app.generate_srt_file(sentences, audio_files, srt_output_path)
     for i in range(len(audio_files)):
         os.remove(audio_files[i])
-    print("語音生成完畢")
+    print("语音生成完毕")
     return merged_output_path
 
 
@@ -191,5 +200,5 @@ if __name__ == "__main__":
         else:
             print("Invalid file format. Please provide a TXT file.")
     else:
-        print("讀取文字中……")
+        print("读取文本中……")
         load_source_data_text(input_path, 0)
