@@ -150,15 +150,14 @@ class TextToSpeech(object):
                 totalLen = len(re.sub(r'([，：])', '', sentence))
                 parts = [part.strip() for part in re.split(r'[，：。！？,:\.!\?][”’\'"」』]?', sentence)]
                 for index, part in enumerate(parts):
-                    if part.strip() == "":
-                        continue
                     part_time = int(audioLen * len(part) / totalLen)
                     end_time = start_time + part_time
                     if index == len(parts) - 1:
                         end_time = totalEndTime
-                    srt_index = srt_index + 1
-                    srt_content = f"{srt_index}\n{self.format_time(start_time)} --> {self.format_time(end_time)}\n{part}\n\n"
-                    file.write(srt_content)
+                    if part.strip() != "":
+                        srt_index = srt_index + 1
+                        srt_content = f"{srt_index}\n{self.format_time(start_time)} --> {self.format_time(end_time)}\n{part}\n\n"
+                        file.write(srt_content)
                     start_time = end_time
 
     def format_time(self, milliseconds):
@@ -200,7 +199,7 @@ def load_source_data_text(file_path, failed):
     try:
         app.get_token()
     except Exception as e:
-        if failed < 20:
+        if failed < 30:
             print("检测到异常，自动重启中……")
             time.sleep(3)
             load_source_data_text(file_path, failed + 1)
@@ -218,7 +217,7 @@ def load_source_data_text(file_path, failed):
         path_child = os.path.join(new_path, str(index))
         result = app.save_audio(sentence, path_child)
         if result == False:
-            if failed < 20:
+            if failed < 30:
                 print("检测到异常，自动重启中……")
                 time.sleep(3)
                 load_source_data_text(file_path, failed + 1)
